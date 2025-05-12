@@ -14,10 +14,11 @@ public class OrderController {
 
     private final OrderService service;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Integer> createOrder(
             @RequestBody @Valid OrderRequest request
     ){
+
         return ResponseEntity.ok(service.createOrder(request));
     }
     @GetMapping

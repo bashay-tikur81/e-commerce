@@ -2,6 +2,7 @@ package com.zcommerce.ecommerce.order.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.zcommerce.ecommerce.order.product.PurchaseRequest;
+import jakarta.persistence.GeneratedValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record OrderRequest(
+        @GeneratedValue
         Integer id,
         String reference,
         @Positive(message = "Order amount should be positive")

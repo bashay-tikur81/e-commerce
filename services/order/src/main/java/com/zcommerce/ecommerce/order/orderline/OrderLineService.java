@@ -23,22 +23,13 @@ public class OrderLineService {
     @PersistenceContext
     private final EntityManager entityManager;
 
-//    @Transactional
-//    public Integer saveOrderLine(OrderLineRequest orderLineRequest) {
-//        var order =  mapper.toOrderLine(orderLineRequest);
-//        return repository.save(order).getId();
-//    }
-
-
-//    @Transactional
+    @Transactional
     public Integer saveOrderLine(OrderLineRequest orderLineRequest) {
-        var orderLine = mapper.toOrderLine(orderLineRequest); // Convert request to OrderLine
 
-        // Ensure Order is persisted before setting it in OrderLine
-        Order order = orderRepository.findById(orderLineRequest.id())
-                .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderLineRequest.id()));
-//        entityManager.refresh(order);
-        orderLine.setOrder(order); // Now setting a managed Order entity
+        var orderLine =  mapper.toOrderLine(orderLineRequest);
+        Order order = orderRepository.findById(orderLineRequest.orderId()).orElseThrow(() ->
+                new EntityNotFoundException("order not found: " + orderLineRequest.orderId()));
+        orderLine.setOrder(order);
         return repository.save(orderLine).getId();
     }
 

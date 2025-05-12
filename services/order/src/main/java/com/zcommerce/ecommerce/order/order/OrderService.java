@@ -37,8 +37,8 @@ public class OrderService {
     public Integer createOrder(OrderRequest request) {
        var customer = this. customerClient.findCustomerById(request.customerId())
                .orElseThrow(()-> new BusinessException("Can't create order with the provided id "));
-
        var purchasedProducts = this.productClient.purchaseProducts(request.products());
+
        var order = this.repository.save(mapper.toOrder(request));
 
        for(PurchaseRequest purchaseRequest: request.products()){
