@@ -57,7 +57,7 @@ public class EmailService {
             log.info(String.format("INFO Email successfully sent to %s with template %s", destinationEmail, templateName));
 
         } catch (MessagingException e) {
-            log.warn("WARNING - Cannot send email to {}", destinationEmail);
+            log.warn("WARNING - Can't send email to {} ", destinationEmail);
         }
 
     }
