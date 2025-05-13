@@ -47,7 +47,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo:/data
+      - mongo:/data/db
     networks:
       - microservices-net  # Ensure network is defined
 

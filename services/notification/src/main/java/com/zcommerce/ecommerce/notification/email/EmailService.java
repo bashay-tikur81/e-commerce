@@ -26,42 +26,6 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
-    @Async
-    public void sendPaymentSuccessEmail(
-            String destinationEmail,
-            String customerName,
-            BigDecimal amount,
-            String orderReference
-    ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(
-                mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-        messageHelper.setFrom("tikurbashay22@gmail.com");
-        final String templateName = EmailTemplates.PAYMENT_CONFIRMATION.getTemplate();
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("customerName", customerName);
-        variables.put("amount", amount);
-        variables.put("orderReference", orderReference);
-
-        Context context = new Context();
-        context.setVariables(variables);
-        messageHelper.setSubject(EmailTemplates.PAYMENT_CONFIRMATION.getSubject());
-
-        try{
-            String htmlTemplate = templateEngine.process(templateName,context);
-            messageHelper.setText(htmlTemplate, true);
-            messageHelper.setTo(destinationEmail);
-
-            mailSender.send(mimeMessage);
-            log.info(String.format("INFO Email successfully sent to %s with template %s", destinationEmail, templateName));
-
-        } catch (MessagingException e) {
-            log.warn("WARNING - Can't send email to {} ", destinationEmail);
-        }
-
-    }
-
     public void sendOrderConfirmationEmail(
             String destinationEmail,
             String customerName,
@@ -99,4 +63,40 @@ public class EmailService {
             log.warn("WARNING - Cannot send email to {}", destinationEmail);
         }
     }
+    @Async
+    public void sendPaymentSuccessEmail(
+            String destinationEmail,
+            String customerName,
+            BigDecimal amount,
+            String orderReference
+    ) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(
+                mimeMessage, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
+        messageHelper.setFrom("tikurbashay22@gmail.com");
+        final String templateName = EmailTemplates.PAYMENT_CONFIRMATION.getTemplate();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("customerName", customerName);
+        variables.put("amount", amount);
+        variables.put("orderReference", orderReference);
+
+        Context context = new Context();
+        context.setVariables(variables);
+        messageHelper.setSubject(EmailTemplates.PAYMENT_CONFIRMATION.getSubject());
+
+        try{
+            String htmlTemplate = templateEngine.process(templateName,context);
+            messageHelper.setText(htmlTemplate, true);
+            messageHelper.setTo(destinationEmail);
+
+            mailSender.send(mimeMessage);
+            log.info(String.format("INFO Email successfully sent to %s with template %s", destinationEmail, templateName));
+
+        } catch (MessagingException e) {
+            log.warn("WARNING - Can't send email to {} ", destinationEmail);
+        }
+
+    }
+
 }
