@@ -78,7 +78,7 @@ public class EmailService {
         final String templateName = EmailTemplates.ORDER_CONFIRMATION.getTemplate();
         Map<String, Object> variables = new HashMap<>();
         variables.put("customerName", customerName);
-        variables.put("totalAmount", amount);
+        variables.put("amount", amount);
         variables.put("orderReference", orderReference);
         variables.put("products", products);
 

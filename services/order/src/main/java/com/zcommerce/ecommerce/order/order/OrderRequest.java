@@ -17,7 +17,7 @@ public record OrderRequest(
         Integer id,
         String reference,
         @Positive(message = "Order amount should be positive")
-        BigDecimal amount,
+        BigDecimal totalAmount,
         @NotNull(message = "Payment method is required")
         PaymentMethod paymentMethod,
         @NotNull(message = "Customer should be present")

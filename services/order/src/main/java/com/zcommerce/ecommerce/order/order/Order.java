@@ -38,8 +38,8 @@ public class Order {
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
-//    @LastModifiedDate
-//    @Column(insertable = false)
-//    private LocalDateTime lastModifiedDate;
+    @LastModifiedDate
+    @Column(insertable = false, nullable = false)
+    private LocalDateTime lastModifiedDate;
 
 }
