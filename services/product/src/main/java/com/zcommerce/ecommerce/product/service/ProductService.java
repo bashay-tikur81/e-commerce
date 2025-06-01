@@ -2,10 +2,7 @@ package com.zcommerce.ecommerce.product.service;
 
 import com.zcommerce.ecommerce.product.dao.ProductRepository;
 import com.zcommerce.ecommerce.product.exception.ProductPurchaseException;
-import com.zcommerce.ecommerce.product.model.ProductPurchaseRequest;
-import com.zcommerce.ecommerce.product.model.ProductPurchaseResponse;
-import com.zcommerce.ecommerce.product.model.ProductRequest;
-import com.zcommerce.ecommerce.product.model.ProductResponse;
+import com.zcommerce.ecommerce.product.model.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +17,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
     private final ProductMapper mapper;
 
     public Integer createProduct(@Valid ProductRequest request) {
         var product = mapper.toProduct(request);
-        return repository.save(product).getId();
+        return productRepository.save(product).getId();
     }
 
     public List<ProductPurchaseResponse> purchaseProducts(List<ProductPurchaseRequest> request) {
@@ -33,7 +30,7 @@ public class ProductService {
                 .stream()
                 .map(ProductPurchaseRequest::productId)
                 .toList();
-        var storedProducts = repository.findAllByIdInOrderById(productIds);
+        var storedProducts = productRepository.findAllByIdInOrderById(productIds);
         if(productIds.size() != storedProducts.size()){
             throw new ProductPurchaseException("One or more missing");
         }
@@ -51,7 +48,7 @@ public class ProductService {
             }
             var newAvailableQuantity = product.getAvailableQuantity()- productRequest.quantity();
             product.setAvailableQuantity(newAvailableQuantity);
-            repository.save(product);
+            productRepository.save(product);
             purchasedProducts.add(mapper.toProductPurchaseResponse(product, productRequest.quantity()));
 
             
@@ -61,14 +58,37 @@ public class ProductService {
     }
 
     public ProductResponse findById(Integer productId) {
-        return  repository.findById(productId).map(mapper::toProductResponse)
+        return  productRepository.findById(productId).map(mapper::toProductResponse)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with id: "+productId));
     }
 
     public List<ProductResponse> findAll() {
-        return repository.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(mapper::toProductResponse)
                 .collect(Collectors.toList());
     }
+
+
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.searchProducts(keyword);
+    }
+
+    public void deleteProduct(Integer id) {
+        productRepository.deleteById(id);
+    }
+
+//    public ProductResponse updateProduct(Integer id, ProductRequest dto) {
+//        Product product = productRepository.findById(id).orElseThrow();
+//        Category category = productRepository.findById(dto.categoryId()).orElseThrow();
+//
+//        product.setName(dto.name());
+//        product.setDescription(dto.description());
+//        product.setAvailableQuantity(dto.availableQuantity());
+//        product.setPrice(dto.price());
+//        product.setCategory(category);
+//
+//        product = productRepository.save(product);
+//        return ProductResponse.fromEntity(product);
+//    }
 }

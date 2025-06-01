@@ -23,8 +23,10 @@ public class NotificationConsumer {
     private final EmailService emailService;
 
     @KafkaListener(topics = "payment-topic")
-    public void consumePaymentSuccessNotification(PaymentConfirmation paymentConfirmation) throws MessagingException {
-        log.info(String.format("Consuming the message from payment-topic topic %s", paymentConfirmation));
+    public void consumePaymentSuccessNotification(PaymentConfirmation paymentConfirmation) {
+        log.info("Consuming message from payment-topic: {}", paymentConfirmation);
+
+        // Save the payment notification
         repository.save(
                 Notification.builder()
                         .type(NotificationType.PAYMENT_CONFIRMATION)
@@ -32,19 +34,26 @@ public class NotificationConsumer {
                         .paymentConfirmation(paymentConfirmation)
                         .build()
         );
-        var customerName = paymentConfirmation.customerFirstName() + " " + paymentConfirmation.customerLastName();
-        emailService.sendPaymentSuccessEmail(
-                paymentConfirmation.customerEmail(),
-                customerName,
-                paymentConfirmation.amount(),
-                paymentConfirmation.orderReference()
-        );
 
+        var customerName = paymentConfirmation.customerFirstName() + " " + paymentConfirmation.customerLastName();
+
+        try {
+            emailService.sendPaymentSuccessEmail(
+                    paymentConfirmation.customerEmail(),
+                    customerName,
+                    paymentConfirmation.amount(),
+                    paymentConfirmation.orderReference()
+            );
+        } catch (MessagingException e) {
+            log.error("Failed to send payment confirmation email", e);
+        }
     }
 
     @KafkaListener(topics = "order-topic")
-    public void consumeOrderConfirmationNotification(OrderConfirmation orderConfirmation) throws MessagingException {
-        log.info(String.format("Consuming the message from order-topic topic %s", orderConfirmation));
+    public void consumeOrderConfirmationNotification(OrderConfirmation orderConfirmation) {
+        log.info("Consuming message from order-topic: {}", orderConfirmation);
+
+        // Save the order notification
         repository.save(
                 Notification.builder()
                         .type(NotificationType.ORDER_CONFIRMATION)
@@ -52,15 +61,19 @@ public class NotificationConsumer {
                         .orderConfirmation(orderConfirmation)
                         .build()
         );
+
         var customerName = orderConfirmation.customer().firstName() + " " + orderConfirmation.customer().lastName();
-        emailService.sendOrderConfirmationEmail(
-                orderConfirmation.customer().email(),
-                customerName,
-                orderConfirmation.totalAmount(),
-                orderConfirmation.orderReference(),
-                orderConfirmation.products()
-        );
 
+        try {
+            emailService.sendOrderConfirmationEmail(
+                    orderConfirmation.customer().email(),
+                    customerName,
+                    orderConfirmation.totalAmount(),
+                    orderConfirmation.orderReference(),
+                    orderConfirmation.products()
+            );
+        } catch (MessagingException e) {
+            log.error("Failed to send order confirmation email", e);
+        }
     }
-
 }

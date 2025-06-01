@@ -1,8 +1,8 @@
 spring:
   data:
     mongodb:
-      username: ertale
-      password: admin
+      username: admin
+      password: ertale
       host: localhost
       port: 27017
       database: notification
@@ -17,13 +17,14 @@ spring:
       properties:
         spring.json.trusted.packages: '*'
         spring.json.type.mapping: orderConfirmation:com.zcommerce.ecommerce.notification.kafka.order.OrderConfirmation,paymentConfirmation:com.zcommerce.ecommerce.notification.kafka.payment.PaymentConfirmation
+        spring.json.value.default.type: com.zcommerce.ecommerce.notification.kafka.order.OrderConfirmation
 
 
   mail:
     host: localhost
     port: 1025
-    username: ertale
-    password: admin
+    username: admin
+    password: ertale
     properties:
       mail:
         smtp:
