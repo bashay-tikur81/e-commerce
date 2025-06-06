@@ -77,6 +77,8 @@ services:
       - microservices-net
     command:
       - "start-dev"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
 
 
 
@@ -118,5 +120,6 @@ volumes:
   postgres:
   pgadmin:
   mongo:
+  keycloak_data:
   kafka_data:
         driver: local

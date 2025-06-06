@@ -29,7 +29,9 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getCategory().getId(),
                 product.getCategory().getName(),
-                product.getCategory().getDescription()
+                product.getCategory().getDescription(),
+                product.getLikes(),
+                product.getImageUrl()
         );
 
     }
@@ -40,7 +42,8 @@ public class ProductMapper {
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                quantity
+                quantity,
+                product.getImageUrl()
 
         );
     }
